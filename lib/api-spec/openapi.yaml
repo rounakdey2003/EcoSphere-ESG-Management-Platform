@@ -1,0 +1,2175 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: EcoSphere ESG Management Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: departments
+    description: Department management
+  - name: categories
+    description: Category management
+  - name: employees
+    description: Employee management
+  - name: environmental
+    description: Environmental module
+  - name: social
+    description: Social module
+  - name: governance
+    description: Governance module
+  - name: gamification
+    description: Gamification module
+  - name: reports
+    description: Reports and analytics
+  - name: settings
+    description: Platform settings
+  - name: dashboard
+    description: Dashboard summaries
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── Departments ──────────────────────────────────────────────────────────
+  /departments:
+    get:
+      operationId: listDepartments
+      tags: [departments]
+      summary: List all departments
+      responses:
+        "200":
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  /departments/{id}:
+    get:
+      operationId: getDepartment
+      tags: [departments]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Department
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    patch:
+      operationId: updateDepartment
+      tags: [departments]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    delete:
+      operationId: deleteDepartment
+      tags: [departments]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /departments/{id}/score:
+    get:
+      operationId: getDepartmentScore
+      tags: [departments]
+      summary: Get ESG scores for a department
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Department ESG score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepartmentScore"
+
+  # ── Categories ───────────────────────────────────────────────────────────
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [csr_activity, challenge]
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+    post:
+      operationId: createCategory
+      tags: [categories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  /categories/{id}:
+    patch:
+      operationId: updateCategory
+      tags: [categories]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+    delete:
+      operationId: deleteCategory
+      tags: [categories]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Employees ────────────────────────────────────────────────────────────
+  /employees:
+    get:
+      operationId: listEmployees
+      tags: [employees]
+      responses:
+        "200":
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+    post:
+      operationId: createEmployee
+      tags: [employees]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+
+  /employees/{id}:
+    get:
+      operationId: getEmployee
+      tags: [employees]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    patch:
+      operationId: updateEmployee
+      tags: [employees]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+
+  # ── Environmental ────────────────────────────────────────────────────────
+  /emission-factors:
+    get:
+      operationId: listEmissionFactors
+      tags: [environmental]
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionFactor"
+    post:
+      operationId: createEmissionFactor
+      tags: [environmental]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionFactorInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionFactor"
+
+  /emission-factors/{id}:
+    patch:
+      operationId: updateEmissionFactor
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionFactorUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionFactor"
+    delete:
+      operationId: deleteEmissionFactor
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /carbon-transactions:
+    get:
+      operationId: listCarbonTransactions
+      tags: [environmental]
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: List of carbon transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CarbonTransaction"
+    post:
+      operationId: createCarbonTransaction
+      tags: [environmental]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarbonTransactionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarbonTransaction"
+
+  /carbon-transactions/{id}:
+    get:
+      operationId: getCarbonTransaction
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Carbon transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarbonTransaction"
+    delete:
+      operationId: deleteCarbonTransaction
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /environmental-goals:
+    get:
+      operationId: listEnvironmentalGoals
+      tags: [environmental]
+      responses:
+        "200":
+          description: List of goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EnvironmentalGoal"
+    post:
+      operationId: createEnvironmentalGoal
+      tags: [environmental]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnvironmentalGoalInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvironmentalGoal"
+
+  /environmental-goals/{id}:
+    patch:
+      operationId: updateEnvironmentalGoal
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnvironmentalGoalUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvironmentalGoal"
+    delete:
+      operationId: deleteEnvironmentalGoal
+      tags: [environmental]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Social ───────────────────────────────────────────────────────────────
+  /csr-activities:
+    get:
+      operationId: listCsrActivities
+      tags: [social]
+      responses:
+        "200":
+          description: List of CSR activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CsrActivity"
+    post:
+      operationId: createCsrActivity
+      tags: [social]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CsrActivityInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CsrActivity"
+
+  /csr-activities/{id}:
+    get:
+      operationId: getCsrActivity
+      tags: [social]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: CSR Activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CsrActivity"
+    patch:
+      operationId: updateCsrActivity
+      tags: [social]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CsrActivityUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CsrActivity"
+    delete:
+      operationId: deleteCsrActivity
+      tags: [social]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /employee-participations:
+    get:
+      operationId: listEmployeeParticipations
+      tags: [social]
+      parameters:
+        - { name: employeeId, in: query, schema: { type: integer } }
+        - { name: activityId, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: List of participations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmployeeParticipation"
+    post:
+      operationId: createEmployeeParticipation
+      tags: [social]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeParticipationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeParticipation"
+
+  /employee-participations/{id}:
+    patch:
+      operationId: updateEmployeeParticipation
+      tags: [social]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeParticipationUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeParticipation"
+
+  # ── Governance ───────────────────────────────────────────────────────────
+  /esg-policies:
+    get:
+      operationId: listEsgPolicies
+      tags: [governance]
+      responses:
+        "200":
+          description: List of ESG policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EsgPolicy"
+    post:
+      operationId: createEsgPolicy
+      tags: [governance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EsgPolicyInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EsgPolicy"
+
+  /esg-policies/{id}:
+    get:
+      operationId: getEsgPolicy
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: ESG Policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EsgPolicy"
+    patch:
+      operationId: updateEsgPolicy
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EsgPolicyUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EsgPolicy"
+    delete:
+      operationId: deleteEsgPolicy
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /policy-acknowledgements:
+    get:
+      operationId: listPolicyAcknowledgements
+      tags: [governance]
+      parameters:
+        - { name: policyId, in: query, schema: { type: integer } }
+        - { name: employeeId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: List of acknowledgements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PolicyAcknowledgement"
+    post:
+      operationId: createPolicyAcknowledgement
+      tags: [governance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PolicyAcknowledgementInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyAcknowledgement"
+
+  /audits:
+    get:
+      operationId: listAudits
+      tags: [governance]
+      responses:
+        "200":
+          description: List of audits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Audit"
+    post:
+      operationId: createAudit
+      tags: [governance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Audit"
+
+  /audits/{id}:
+    get:
+      operationId: getAudit
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Audit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Audit"
+    patch:
+      operationId: updateAudit
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Audit"
+
+  /compliance-issues:
+    get:
+      operationId: listComplianceIssues
+      tags: [governance]
+      parameters:
+        - { name: auditId, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: overdue, in: query, schema: { type: boolean } }
+      responses:
+        "200":
+          description: List of compliance issues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceIssue"
+    post:
+      operationId: createComplianceIssue
+      tags: [governance]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceIssueInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceIssue"
+
+  /compliance-issues/{id}:
+    get:
+      operationId: getComplianceIssue
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Compliance issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceIssue"
+    patch:
+      operationId: updateComplianceIssue
+      tags: [governance]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceIssueUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceIssue"
+
+  # ── Gamification ─────────────────────────────────────────────────────────
+  /challenges:
+    get:
+      operationId: listChallenges
+      tags: [gamification]
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: categoryId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: List of challenges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Challenge"
+    post:
+      operationId: createChallenge
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+
+  /challenges/{id}:
+    get:
+      operationId: getChallenge
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Challenge
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+    patch:
+      operationId: updateChallenge
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Challenge"
+    delete:
+      operationId: deleteChallenge
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /challenge-participations:
+    get:
+      operationId: listChallengeParticipations
+      tags: [gamification]
+      parameters:
+        - { name: challengeId, in: query, schema: { type: integer } }
+        - { name: employeeId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: List of challenge participations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChallengeParticipation"
+    post:
+      operationId: createChallengeParticipation
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeParticipationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChallengeParticipation"
+
+  /challenge-participations/{id}:
+    patch:
+      operationId: updateChallengeParticipation
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChallengeParticipationUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChallengeParticipation"
+
+  /badges:
+    get:
+      operationId: listBadges
+      tags: [gamification]
+      responses:
+        "200":
+          description: List of badges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Badge"
+    post:
+      operationId: createBadge
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BadgeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Badge"
+
+  /badges/{id}:
+    patch:
+      operationId: updateBadge
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BadgeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Badge"
+    delete:
+      operationId: deleteBadge
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /employee-badges:
+    get:
+      operationId: listEmployeeBadges
+      tags: [gamification]
+      parameters:
+        - { name: employeeId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: List of employee badges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmployeeBadge"
+    post:
+      operationId: awardBadge
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeBadgeInput"
+      responses:
+        "201":
+          description: Badge awarded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeeBadge"
+
+  /rewards:
+    get:
+      operationId: listRewards
+      tags: [gamification]
+      responses:
+        "200":
+          description: List of rewards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reward"
+    post:
+      operationId: createReward
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RewardInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reward"
+
+  /rewards/{id}:
+    patch:
+      operationId: updateReward
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RewardUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reward"
+    delete:
+      operationId: deleteReward
+      tags: [gamification]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204":
+          description: Deleted
+
+  /reward-redemptions:
+    get:
+      operationId: listRewardRedemptions
+      tags: [gamification]
+      parameters:
+        - { name: employeeId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: List of redemptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RewardRedemption"
+    post:
+      operationId: redeemReward
+      tags: [gamification]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RewardRedemptionInput"
+      responses:
+        "201":
+          description: Redeemed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RewardRedemption"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [gamification]
+      summary: Get XP leaderboard
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: limit, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  # ── Notifications ─────────────────────────────────────────────────────────
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [settings]
+      parameters:
+        - { name: employeeId, in: query, schema: { type: integer } }
+        - { name: unread, in: query, schema: { type: boolean } }
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [settings]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  # ── Settings ─────────────────────────────────────────────────────────────
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get platform settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformSettings"
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlatformSettingsUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformSettings"
+
+  # ── Dashboard / Summary (wow endpoints) ──────────────────────────────────
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get overall ESG dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/environmental:
+    get:
+      operationId: getEnvironmentalDashboard
+      tags: [dashboard]
+      summary: Environmental dashboard data
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: Environmental dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvironmentalDashboard"
+
+  /dashboard/social:
+    get:
+      operationId: getSocialDashboard
+      tags: [dashboard]
+      summary: Social dashboard data
+      responses:
+        "200":
+          description: Social dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SocialDashboard"
+
+  /dashboard/governance:
+    get:
+      operationId: getGovernanceDashboard
+      tags: [dashboard]
+      summary: Governance dashboard data
+      responses:
+        "200":
+          description: Governance dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GovernanceDashboard"
+
+  /dashboard/department-rankings:
+    get:
+      operationId: getDepartmentRankings
+      tags: [dashboard]
+      summary: Department ESG rankings
+      responses:
+        "200":
+          description: Rankings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DepartmentRanking"
+
+  # ── Reports ──────────────────────────────────────────────────────────────
+  /reports/environmental:
+    get:
+      operationId: getEnvironmentalReport
+      tags: [reports]
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: Environmental report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvironmentalReport"
+
+  /reports/social:
+    get:
+      operationId: getSocialReport
+      tags: [reports]
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+        - { name: employeeId, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Social report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SocialReport"
+
+  /reports/governance:
+    get:
+      operationId: getGovernanceReport
+      tags: [reports]
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: Governance report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GovernanceReport"
+
+  /reports/esg-summary:
+    get:
+      operationId: getEsgSummaryReport
+      tags: [reports]
+      parameters:
+        - { name: departmentId, in: query, schema: { type: integer } }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        "200":
+          description: ESG summary report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EsgSummaryReport"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    # ── Department ──────────────────────────────────────────────────────────
+    Department:
+      type: object
+      required: [id, name, code, status]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        code: { type: string }
+        head: { type: ["string", "null"] }
+        parentDepartmentId: { type: ["integer", "null"] }
+        employeeCount: { type: integer }
+        status: { type: string, enum: [active, inactive] }
+        createdAt: { type: string, format: date-time }
+
+    DepartmentInput:
+      type: object
+      required: [name, code]
+      properties:
+        name: { type: string }
+        code: { type: string }
+        head: { type: string }
+        parentDepartmentId: { type: integer }
+        employeeCount: { type: integer, default: 0 }
+        status: { type: string, enum: [active, inactive], default: active }
+
+    DepartmentUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        code: { type: string }
+        head: { type: string }
+        parentDepartmentId: { type: integer }
+        employeeCount: { type: integer }
+        status: { type: string, enum: [active, inactive] }
+
+    DepartmentScore:
+      type: object
+      required: [departmentId, environmentalScore, socialScore, governanceScore, totalScore]
+      properties:
+        departmentId: { type: integer }
+        departmentName: { type: string }
+        environmentalScore: { type: number }
+        socialScore: { type: number }
+        governanceScore: { type: number }
+        totalScore: { type: number }
+        updatedAt: { type: string, format: date-time }
+
+    # ── Category ────────────────────────────────────────────────────────────
+    Category:
+      type: object
+      required: [id, name, type, status]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        type: { type: string, enum: [csr_activity, challenge] }
+        status: { type: string, enum: [active, inactive] }
+
+    CategoryInput:
+      type: object
+      required: [name, type]
+      properties:
+        name: { type: string }
+        type: { type: string, enum: [csr_activity, challenge] }
+        status: { type: string, enum: [active, inactive], default: active }
+
+    CategoryUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        type: { type: string, enum: [csr_activity, challenge] }
+        status: { type: string, enum: [active, inactive] }
+
+    # ── Employee ────────────────────────────────────────────────────────────
+    Employee:
+      type: object
+      required: [id, name, email, departmentId]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+        departmentId: { type: integer }
+        departmentName: { type: ["string", "null"] }
+        gender: { type: ["string", "null"] }
+        xp: { type: integer }
+        totalPoints: { type: integer }
+        joinedAt: { type: string, format: date }
+        status: { type: string, enum: [active, inactive] }
+
+    EmployeeInput:
+      type: object
+      required: [name, email, departmentId]
+      properties:
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+        departmentId: { type: integer }
+        gender: { type: string, enum: [male, female, other, prefer_not_to_say] }
+        joinedAt: { type: string, format: date }
+        status: { type: string, enum: [active, inactive], default: active }
+
+    EmployeeUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        role: { type: string }
+        departmentId: { type: integer }
+        gender: { type: string }
+        status: { type: string }
+
+    # ── Emission Factor ─────────────────────────────────────────────────────
+    EmissionFactor:
+      type: object
+      required: [id, name, category, factor, unit]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        category: { type: string, enum: [purchase, manufacturing, expense, fleet, other] }
+        factor: { type: number }
+        unit: { type: string }
+        description: { type: ["string", "null"] }
+        isActive: { type: boolean }
+
+    EmissionFactorInput:
+      type: object
+      required: [name, category, factor, unit]
+      properties:
+        name: { type: string }
+        category: { type: string, enum: [purchase, manufacturing, expense, fleet, other] }
+        factor: { type: number }
+        unit: { type: string }
+        description: { type: string }
+        isActive: { type: boolean, default: true }
+
+    EmissionFactorUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        category: { type: string }
+        factor: { type: number }
+        unit: { type: string }
+        description: { type: string }
+        isActive: { type: boolean }
+
+    # ── Carbon Transaction ──────────────────────────────────────────────────
+    CarbonTransaction:
+      type: object
+      required: [id, departmentId, emissionFactorId, quantity, totalEmission, transactionDate, source]
+      properties:
+        id: { type: integer }
+        departmentId: { type: integer }
+        departmentName: { type: ["string", "null"] }
+        emissionFactorId: { type: integer }
+        emissionFactorName: { type: ["string", "null"] }
+        quantity: { type: number }
+        totalEmission: { type: number }
+        source: { type: string, enum: [purchase, manufacturing, expense, fleet, manual] }
+        description: { type: ["string", "null"] }
+        transactionDate: { type: string, format: date }
+        createdAt: { type: string, format: date-time }
+
+    CarbonTransactionInput:
+      type: object
+      required: [departmentId, emissionFactorId, quantity, source, transactionDate]
+      properties:
+        departmentId: { type: integer }
+        emissionFactorId: { type: integer }
+        quantity: { type: number }
+        source: { type: string, enum: [purchase, manufacturing, expense, fleet, manual] }
+        description: { type: string }
+        transactionDate: { type: string, format: date }
+
+    # ── Environmental Goal ──────────────────────────────────────────────────
+    EnvironmentalGoal:
+      type: object
+      required: [id, title, targetValue, currentValue, unit, deadline, status]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        departmentId: { type: ["integer", "null"] }
+        departmentName: { type: ["string", "null"] }
+        targetValue: { type: number }
+        currentValue: { type: number }
+        unit: { type: string }
+        deadline: { type: string, format: date }
+        status: { type: string, enum: [active, achieved, missed, cancelled] }
+        progressPercent: { type: number }
+
+    EnvironmentalGoalInput:
+      type: object
+      required: [title, targetValue, unit, deadline]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        departmentId: { type: integer }
+        targetValue: { type: number }
+        currentValue: { type: number, default: 0 }
+        unit: { type: string }
+        deadline: { type: string, format: date }
+        status: { type: string, enum: [active, achieved, missed, cancelled], default: active }
+
+    EnvironmentalGoalUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        targetValue: { type: number }
+        currentValue: { type: number }
+        deadline: { type: string, format: date }
+        status: { type: string }
+
+    # ── CSR Activity ────────────────────────────────────────────────────────
+    CsrActivity:
+      type: object
+      required: [id, title, categoryId, status, startDate]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        categoryId: { type: integer }
+        categoryName: { type: ["string", "null"] }
+        departmentId: { type: ["integer", "null"] }
+        departmentName: { type: ["string", "null"] }
+        points: { type: integer }
+        startDate: { type: string, format: date }
+        endDate: { type: ["string", "null"] }
+        status: { type: string, enum: [planned, active, completed, cancelled] }
+        participantCount: { type: integer }
+
+    CsrActivityInput:
+      type: object
+      required: [title, categoryId, startDate]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: integer }
+        departmentId: { type: integer }
+        points: { type: integer, default: 100 }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        status: { type: string, enum: [planned, active, completed, cancelled], default: planned }
+
+    CsrActivityUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: integer }
+        departmentId: { type: integer }
+        points: { type: integer }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        status: { type: string }
+
+    # ── Employee Participation ──────────────────────────────────────────────
+    EmployeeParticipation:
+      type: object
+      required: [id, employeeId, activityId, approvalStatus]
+      properties:
+        id: { type: integer }
+        employeeId: { type: integer }
+        employeeName: { type: ["string", "null"] }
+        activityId: { type: integer }
+        activityTitle: { type: ["string", "null"] }
+        proof: { type: ["string", "null"] }
+        approvalStatus: { type: string, enum: [pending, approved, rejected] }
+        pointsEarned: { type: integer }
+        completionDate: { type: ["string", "null"] }
+        submittedAt: { type: string, format: date-time }
+
+    EmployeeParticipationInput:
+      type: object
+      required: [employeeId, activityId]
+      properties:
+        employeeId: { type: integer }
+        activityId: { type: integer }
+        proof: { type: string }
+        completionDate: { type: string, format: date }
+
+    EmployeeParticipationUpdate:
+      type: object
+      properties:
+        proof: { type: string }
+        approvalStatus: { type: string, enum: [pending, approved, rejected] }
+        pointsEarned: { type: integer }
+        completionDate: { type: string, format: date }
+
+    # ── ESG Policy ──────────────────────────────────────────────────────────
+    EsgPolicy:
+      type: object
+      required: [id, title, category, effectiveDate, status]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        category: { type: string, enum: [environmental, social, governance] }
+        effectiveDate: { type: string, format: date }
+        expiryDate: { type: ["string", "null"] }
+        status: { type: string, enum: [draft, active, archived] }
+        acknowledgementCount: { type: integer }
+        totalEmployees: { type: integer }
+
+    EsgPolicyInput:
+      type: object
+      required: [title, category, effectiveDate]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        category: { type: string, enum: [environmental, social, governance] }
+        effectiveDate: { type: string, format: date }
+        expiryDate: { type: string, format: date }
+        status: { type: string, enum: [draft, active, archived], default: draft }
+
+    EsgPolicyUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        category: { type: string }
+        effectiveDate: { type: string, format: date }
+        expiryDate: { type: string, format: date }
+        status: { type: string }
+
+    # ── Policy Acknowledgement ──────────────────────────────────────────────
+    PolicyAcknowledgement:
+      type: object
+      required: [id, policyId, employeeId, acknowledgedAt]
+      properties:
+        id: { type: integer }
+        policyId: { type: integer }
+        policyTitle: { type: ["string", "null"] }
+        employeeId: { type: integer }
+        employeeName: { type: ["string", "null"] }
+        acknowledgedAt: { type: string, format: date-time }
+
+    PolicyAcknowledgementInput:
+      type: object
+      required: [policyId, employeeId]
+      properties:
+        policyId: { type: integer }
+        employeeId: { type: integer }
+
+    # ── Audit ────────────────────────────────────────────────────────────────
+    Audit:
+      type: object
+      required: [id, title, auditor, auditDate, status]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        auditor: { type: string }
+        departmentId: { type: ["integer", "null"] }
+        departmentName: { type: ["string", "null"] }
+        auditDate: { type: string, format: date }
+        status: { type: string, enum: [scheduled, in_progress, completed, cancelled] }
+        issueCount: { type: integer }
+
+    AuditInput:
+      type: object
+      required: [title, auditor, auditDate]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        auditor: { type: string }
+        departmentId: { type: integer }
+        auditDate: { type: string, format: date }
+        status: { type: string, enum: [scheduled, in_progress, completed, cancelled], default: scheduled }
+
+    AuditUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        auditor: { type: string }
+        auditDate: { type: string, format: date }
+        status: { type: string }
+
+    # ── Compliance Issue ────────────────────────────────────────────────────
+    ComplianceIssue:
+      type: object
+      required: [id, auditId, severity, description, ownerId, dueDate, status]
+      properties:
+        id: { type: integer }
+        auditId: { type: integer }
+        auditTitle: { type: ["string", "null"] }
+        severity: { type: string, enum: [low, medium, high, critical] }
+        description: { type: string }
+        ownerId: { type: integer }
+        ownerName: { type: ["string", "null"] }
+        dueDate: { type: string, format: date }
+        status: { type: string, enum: [open, in_progress, resolved, overdue] }
+        isOverdue: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    ComplianceIssueInput:
+      type: object
+      required: [auditId, severity, description, ownerId, dueDate]
+      properties:
+        auditId: { type: integer }
+        severity: { type: string, enum: [low, medium, high, critical] }
+        description: { type: string }
+        ownerId: { type: integer }
+        dueDate: { type: string, format: date }
+        status: { type: string, enum: [open, in_progress, resolved, overdue], default: open }
+
+    ComplianceIssueUpdate:
+      type: object
+      properties:
+        severity: { type: string }
+        description: { type: string }
+        ownerId: { type: integer }
+        dueDate: { type: string, format: date }
+        status: { type: string }
+
+    # ── Challenge ────────────────────────────────────────────────────────────
+    Challenge:
+      type: object
+      required: [id, title, categoryId, xp, difficulty, status]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        categoryId: { type: integer }
+        categoryName: { type: ["string", "null"] }
+        xp: { type: integer }
+        difficulty: { type: string, enum: [easy, medium, hard] }
+        evidenceRequired: { type: boolean }
+        deadline: { type: ["string", "null"] }
+        status: { type: string, enum: [draft, active, under_review, completed, archived] }
+        participantCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    ChallengeInput:
+      type: object
+      required: [title, categoryId, xp, difficulty]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: integer }
+        xp: { type: integer }
+        difficulty: { type: string, enum: [easy, medium, hard] }
+        evidenceRequired: { type: boolean, default: false }
+        deadline: { type: string, format: date }
+        status: { type: string, enum: [draft, active, under_review, completed, archived], default: draft }
+
+    ChallengeUpdate:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: integer }
+        xp: { type: integer }
+        difficulty: { type: string }
+        evidenceRequired: { type: boolean }
+        deadline: { type: string, format: date }
+        status: { type: string }
+
+    # ── Challenge Participation ─────────────────────────────────────────────
+    ChallengeParticipation:
+      type: object
+      required: [id, challengeId, employeeId, approvalStatus]
+      properties:
+        id: { type: integer }
+        challengeId: { type: integer }
+        challengeTitle: { type: ["string", "null"] }
+        employeeId: { type: integer }
+        employeeName: { type: ["string", "null"] }
+        progress: { type: integer }
+        proof: { type: ["string", "null"] }
+        approvalStatus: { type: string, enum: [pending, approved, rejected] }
+        xpAwarded: { type: integer }
+        submittedAt: { type: string, format: date-time }
+
+    ChallengeParticipationInput:
+      type: object
+      required: [challengeId, employeeId]
+      properties:
+        challengeId: { type: integer }
+        employeeId: { type: integer }
+        progress: { type: integer, default: 0 }
+        proof: { type: string }
+
+    ChallengeParticipationUpdate:
+      type: object
+      properties:
+        progress: { type: integer }
+        proof: { type: string }
+        approvalStatus: { type: string, enum: [pending, approved, rejected] }
+        xpAwarded: { type: integer }
+
+    # ── Badge ────────────────────────────────────────────────────────────────
+    Badge:
+      type: object
+      required: [id, name, description, unlockRule, icon]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        unlockRule: { type: string }
+        unlockType: { type: string, enum: [xp_threshold, challenge_count, participation_count] }
+        unlockValue: { type: integer }
+        icon: { type: string }
+        isActive: { type: boolean }
+
+    BadgeInput:
+      type: object
+      required: [name, description, unlockRule, unlockType, unlockValue, icon]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        unlockRule: { type: string }
+        unlockType: { type: string, enum: [xp_threshold, challenge_count, participation_count] }
+        unlockValue: { type: integer }
+        icon: { type: string }
+        isActive: { type: boolean, default: true }
+
+    BadgeUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        unlockRule: { type: string }
+        unlockType: { type: string }
+        unlockValue: { type: integer }
+        icon: { type: string }
+        isActive: { type: boolean }
+
+    EmployeeBadge:
+      type: object
+      required: [id, employeeId, badgeId, awardedAt]
+      properties:
+        id: { type: integer }
+        employeeId: { type: integer }
+        employeeName: { type: ["string", "null"] }
+        badgeId: { type: integer }
+        badgeName: { type: ["string", "null"] }
+        badgeIcon: { type: ["string", "null"] }
+        awardedAt: { type: string, format: date-time }
+
+    EmployeeBadgeInput:
+      type: object
+      required: [employeeId, badgeId]
+      properties:
+        employeeId: { type: integer }
+        badgeId: { type: integer }
+
+    # ── Reward ───────────────────────────────────────────────────────────────
+    Reward:
+      type: object
+      required: [id, name, description, pointsRequired, stock, status]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        pointsRequired: { type: integer }
+        stock: { type: integer }
+        status: { type: string, enum: [active, inactive] }
+        redemptionCount: { type: integer }
+
+    RewardInput:
+      type: object
+      required: [name, description, pointsRequired, stock]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        pointsRequired: { type: integer }
+        stock: { type: integer }
+        status: { type: string, enum: [active, inactive], default: active }
+
+    RewardUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        pointsRequired: { type: integer }
+        stock: { type: integer }
+        status: { type: string }
+
+    RewardRedemption:
+      type: object
+      required: [id, employeeId, rewardId, pointsSpent, redeemedAt]
+      properties:
+        id: { type: integer }
+        employeeId: { type: integer }
+        employeeName: { type: ["string", "null"] }
+        rewardId: { type: integer }
+        rewardName: { type: ["string", "null"] }
+        pointsSpent: { type: integer }
+        redeemedAt: { type: string, format: date-time }
+
+    RewardRedemptionInput:
+      type: object
+      required: [employeeId, rewardId]
+      properties:
+        employeeId: { type: integer }
+        rewardId: { type: integer }
+
+    # ── Leaderboard ──────────────────────────────────────────────────────────
+    LeaderboardEntry:
+      type: object
+      required: [rank, employeeId, employeeName, xp, badgeCount, challengeCount]
+      properties:
+        rank: { type: integer }
+        employeeId: { type: integer }
+        employeeName: { type: string }
+        departmentName: { type: ["string", "null"] }
+        xp: { type: integer }
+        totalPoints: { type: integer }
+        badgeCount: { type: integer }
+        challengeCount: { type: integer }
+
+    # ── Notification ─────────────────────────────────────────────────────────
+    Notification:
+      type: object
+      required: [id, employeeId, type, title, message, isRead, createdAt]
+      properties:
+        id: { type: integer }
+        employeeId: { type: integer }
+        type: { type: string, enum: [compliance_issue, csr_approval, challenge_approval, policy_reminder, badge_unlock, reward_redemption] }
+        title: { type: string }
+        message: { type: string }
+        isRead: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    # ── Platform Settings ────────────────────────────────────────────────────
+    PlatformSettings:
+      type: object
+      required: [id]
+      properties:
+        id: { type: integer }
+        autoEmissionCalculation: { type: boolean }
+        evidenceRequired: { type: boolean }
+        badgeAutoAward: { type: boolean }
+        environmentalWeight: { type: number }
+        socialWeight: { type: number }
+        governanceWeight: { type: number }
+        notifyComplianceIssue: { type: boolean }
+        notifyCsrApproval: { type: boolean }
+        notifyChallengeApproval: { type: boolean }
+        notifyPolicyReminder: { type: boolean }
+        notifyBadgeUnlock: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+
+    PlatformSettingsUpdate:
+      type: object
+      properties:
+        autoEmissionCalculation: { type: boolean }
+        evidenceRequired: { type: boolean }
+        badgeAutoAward: { type: boolean }
+        environmentalWeight: { type: number }
+        socialWeight: { type: number }
+        governanceWeight: { type: number }
+        notifyComplianceIssue: { type: boolean }
+        notifyCsrApproval: { type: boolean }
+        notifyChallengeApproval: { type: boolean }
+        notifyPolicyReminder: { type: boolean }
+        notifyBadgeUnlock: { type: boolean }
+
+    # ── Dashboard Schemas ────────────────────────────────────────────────────
+    DashboardSummary:
+      type: object
+      required: [overallEsgScore, environmentalScore, socialScore, governanceScore]
+      properties:
+        overallEsgScore: { type: number }
+        environmentalScore: { type: number }
+        socialScore: { type: number }
+        governanceScore: { type: number }
+        totalCarbonEmissions: { type: number }
+        activeChallenges: { type: integer }
+        totalEmployees: { type: integer }
+        activeParticipations: { type: integer }
+        openComplianceIssues: { type: integer }
+        overdueComplianceIssues: { type: integer }
+        recentActivity: { type: array, items: { $ref: "#/components/schemas/ActivityItem" } }
+
+    ActivityItem:
+      type: object
+      required: [id, type, title, createdAt]
+      properties:
+        id: { type: integer }
+        type: { type: string }
+        title: { type: string }
+        description: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    EnvironmentalDashboard:
+      type: object
+      properties:
+        totalEmissions: { type: number }
+        emissionsByDepartment: { type: array, items: { $ref: "#/components/schemas/EmissionByDept" } }
+        emissionsBySource: { type: array, items: { $ref: "#/components/schemas/EmissionBySource" } }
+        emissionsTrend: { type: array, items: { $ref: "#/components/schemas/TrendPoint" } }
+        goalsProgress: { type: array, items: { $ref: "#/components/schemas/EnvironmentalGoal" } }
+        goalsAchieved: { type: integer }
+        goalsTotal: { type: integer }
+
+    EmissionByDept:
+      type: object
+      required: [departmentId, departmentName, totalEmission]
+      properties:
+        departmentId: { type: integer }
+        departmentName: { type: string }
+        totalEmission: { type: number }
+
+    EmissionBySource:
+      type: object
+      required: [source, totalEmission]
+      properties:
+        source: { type: string }
+        totalEmission: { type: number }
+
+    TrendPoint:
+      type: object
+      required: [period, value]
+      properties:
+        period: { type: string }
+        value: { type: number }
+
+    SocialDashboard:
+      type: object
+      properties:
+        totalParticipations: { type: integer }
+        approvedParticipations: { type: integer }
+        pendingParticipations: { type: integer }
+        activeCsrActivities: { type: integer }
+        participationsByDepartment: { type: array, items: { $ref: "#/components/schemas/ParticipationByDept" } }
+        genderDistribution: { type: array, items: { $ref: "#/components/schemas/GenderDist" } }
+        topParticipants: { type: array, items: { $ref: "#/components/schemas/TopParticipant" } }
+
+    ParticipationByDept:
+      type: object
+      required: [departmentName, count]
+      properties:
+        departmentName: { type: string }
+        count: { type: integer }
+
+    GenderDist:
+      type: object
+      required: [gender, count, percent]
+      properties:
+        gender: { type: string }
+        count: { type: integer }
+        percent: { type: number }
+
+    TopParticipant:
+      type: object
+      required: [employeeId, employeeName, participationCount, pointsEarned]
+      properties:
+        employeeId: { type: integer }
+        employeeName: { type: string }
+        participationCount: { type: integer }
+        pointsEarned: { type: integer }
+
+    GovernanceDashboard:
+      type: object
+      properties:
+        activePolicies: { type: integer }
+        totalAcknowledgements: { type: integer }
+        acknowledgementRate: { type: number }
+        totalAudits: { type: integer }
+        completedAudits: { type: integer }
+        openComplianceIssues: { type: integer }
+        overdueComplianceIssues: { type: integer }
+        issuesBySeverity: { type: array, items: { $ref: "#/components/schemas/IssuesBySeverity" } }
+        recentAudits: { type: array, items: { $ref: "#/components/schemas/Audit" } }
+
+    IssuesBySeverity:
+      type: object
+      required: [severity, count]
+      properties:
+        severity: { type: string }
+        count: { type: integer }
+
+    DepartmentRanking:
+      type: object
+      required: [rank, departmentId, departmentName, totalScore]
+      properties:
+        rank: { type: integer }
+        departmentId: { type: integer }
+        departmentName: { type: string }
+        environmentalScore: { type: number }
+        socialScore: { type: number }
+        governanceScore: { type: number }
+        totalScore: { type: number }
+
+    # ── Report Schemas ───────────────────────────────────────────────────────
+    EnvironmentalReport:
+      type: object
+      properties:
+        generatedAt: { type: string, format: date-time }
+        period: { $ref: "#/components/schemas/ReportPeriod" }
+        totalEmissions: { type: number }
+        emissionsByDepartment: { type: array, items: { $ref: "#/components/schemas/EmissionByDept" } }
+        emissionsBySource: { type: array, items: { $ref: "#/components/schemas/EmissionBySource" } }
+        goalsStatus: { type: array, items: { $ref: "#/components/schemas/EnvironmentalGoal" } }
+        transactions: { type: array, items: { $ref: "#/components/schemas/CarbonTransaction" } }
+
+    SocialReport:
+      type: object
+      properties:
+        generatedAt: { type: string, format: date-time }
+        period: { $ref: "#/components/schemas/ReportPeriod" }
+        totalParticipations: { type: integer }
+        approvalRate: { type: number }
+        activitiesByCategory: { type: array, items: { $ref: "#/components/schemas/ActivityByCategory" } }
+        genderDistribution: { type: array, items: { $ref: "#/components/schemas/GenderDist" } }
+        topParticipants: { type: array, items: { $ref: "#/components/schemas/TopParticipant" } }
+
+    ActivityByCategory:
+      type: object
+      required: [categoryName, count]
+      properties:
+        categoryName: { type: string }
+        count: { type: integer }
+
+    GovernanceReport:
+      type: object
+      properties:
+        generatedAt: { type: string, format: date-time }
+        period: { $ref: "#/components/schemas/ReportPeriod" }
+        activePolicies: { type: integer }
+        acknowledgementRate: { type: number }
+        auditsCompleted: { type: integer }
+        complianceIssuesRaised: { type: integer }
+        complianceIssuesResolved: { type: integer }
+        issuesBySeverity: { type: array, items: { $ref: "#/components/schemas/IssuesBySeverity" } }
+
+    EsgSummaryReport:
+      type: object
+      properties:
+        generatedAt: { type: string, format: date-time }
+        period: { $ref: "#/components/schemas/ReportPeriod" }
+        overallScore: { type: number }
+        environmentalScore: { type: number }
+        socialScore: { type: number }
+        governanceScore: { type: number }
+        departmentRankings: { type: array, items: { $ref: "#/components/schemas/DepartmentRanking" } }
+        highlights: { type: array, items: { type: string } }
+
+    ReportPeriod:
+      type: object
+      required: [startDate, endDate]
+      properties:
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
